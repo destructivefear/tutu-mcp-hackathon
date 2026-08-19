@@ -787,10 +787,18 @@ export default function UrgentTravel() {
               )}
 
               {status === "done" && result && result.count === 0 && (
-                <p className="ut-notice">
-                  На этот день ничего не нашлось. Попробуйте другой день, время или снимите
-                  ограничение по бюджету.
-                </p>
+                <>
+                  {result.unavailableModes.length > 0 && (
+                    <p className="ut-notice">
+                      {result.unavailableModes.map((m) => MODES[m].label).join(", ")}: сервис
+                      сейчас недоступен, попробуйте ещё раз чуть позже.
+                    </p>
+                  )}
+                  <p className="ut-notice">
+                    На этот день ничего не нашлось. Попробуйте другой день, время или снимите
+                    ограничение по бюджету.
+                  </p>
+                </>
               )}
 
               {status === "done" && result && result.count > 0 && (
