@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "../../tokens.css";
+
+@theme inline {
+  --font-sans: var(--font-golos), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
+  --font-heading: var(--font-sans);
+  --color-tutu-navy: #0d0b68;
+  --color-tutu-primary: #6f5df6;
+  --color-tutu-primary-hover: #5c4be0;
+  --color-tutu-text: #181c2d;
+  --color-tutu-muted: #6b7080;
+  --color-tutu-surface: #f0f0f5;
+  --color-tutu-orange-start: #fc5d2c;
+  --color-tutu-orange-end: #ffb118;
+  --color-tutu-purple-start: #8a3ff0;
+  --color-tutu-purple-mid: #c23fd6;
+  --color-tutu-purple-end: #ef5aa8;
+}
+
+@layer base {
+  * {
+    outline-color: color-mix(in oklch, var(--color-tutu-primary) 50%, transparent);
+  }
+  body {
+    background: #fff;
+    color: var(--color-tutu-text);
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+@layer base {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}

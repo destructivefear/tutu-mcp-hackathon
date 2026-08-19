@@ -1,0 +1,77 @@
+/* Hallmark tokens — tutu-clone
+ * Anchor hue: tutu indigo (271–282). Accent: tutu violet. Signal: tutu orange.
+ * Consumed by src/components/sites/tutu-ru/root/urgent-travel.css
+ */
+:root {
+  /* neutrals, tinted toward the indigo anchor */
+  --color-paper: oklch(97.6% 0.008 275);
+  --color-paper-2: oklch(94.6% 0.011 275);
+  --color-rule: oklch(88.5% 0.012 275);
+  --color-rule-2: oklch(82% 0.014 275);
+  --color-neutral: oklch(52% 0.025 272);
+  --color-muted: oklch(43% 0.028 272);
+  --color-ink: oklch(21% 0.045 272);
+
+  /* brand band — exact OKLCH conversion of #0d0b68 (--color-tutu-navy), must match SiteHeader */
+  --color-navy: oklch(25.2% 0.15 269.4);
+  --color-navy-raised: oklch(31% 0.11 270);
+  --color-on-navy: oklch(97% 0.006 275);
+  --color-on-navy-muted: oklch(81% 0.028 275);
+  --color-on-navy-rule: oklch(97% 0.006 275 / 0.16);
+
+  /* accent = brand violet (#6f5df6 / hover #5c4be0) */
+  --color-accent: oklch(55.5% 0.215 282);
+  --color-accent-hover: oklch(49.5% 0.205 282);
+  --color-accent-strong: oklch(47% 0.2 282);
+  --color-accent-soft: oklch(94.5% 0.028 282);
+  --color-accent-ink: oklch(98.5% 0.005 282);
+  --color-focus: oklch(55.5% 0.215 282);
+
+  /* signal = brand orange (#fc5d2c) — urgency markers only, never text */
+  --color-signal: oklch(64% 0.21 41);
+
+  --color-error: oklch(57% 0.2 25);
+
+  /* type: Golos Text (brand) + JetBrains Mono outlier for console data */
+  --font-display: var(--font-golos), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: var(--font-golos), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-outlier: var(--font-jbmono), "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* 1.25 scale from 16px */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.25rem;
+  --text-lg: 1.5625rem;
+  --text-xl: 1.9531rem;
+  --text-2xl: 2.4414rem;
+  --text-display: clamp(2rem, 1.1rem + 3.2vw, 3.0518rem);
+
+  /* 4pt space scale */
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+
+  /* radius */
+  --radius-field: 10px;
+  --radius-chip: 999px;
+
+  /* z-scale */
+  --z-base: 1;
+  --z-raised: 10;
+  --z-sticky: 200;
+}
