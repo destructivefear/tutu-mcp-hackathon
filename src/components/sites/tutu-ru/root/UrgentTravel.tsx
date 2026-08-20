@@ -548,9 +548,56 @@ export default function UrgentTravel() {
     }
   };
 
-  const openOffer = (checkoutUrl: string | null, searchResultsUrl: string | null) => {
-    const url = checkoutUrl ?? searchResultsUrl;
-    if (url) window.open(url, "_blank", "noopener");
+  const [pickingKey, setPickingKey] = useState<string | null>(null);
+
+  const handlePick = async (
+    key: string,
+    checkoutPayload: ResultCard["checkoutPayload"],
+    searchResultsUrl: string | null,
+  ) => {
+    if (!checkoutPayload && !searchResultsUrl) return;
+
+    // Open the tab synchronously, inside the click handler, so it's tied to
+    // the user gesture — popup blockers kill window.open() called after an
+    // await. We fill in its location once the real link comes back.
+    // NOTE: can't pass "noopener" here — browsers hand back a dead reference
+    // for a noopener window, so a later `tab.location.href = ...` is a
+    // silent no-op and the tab just sits blank. Keep the handle, and null
+    // out its `opener` ourselves right before navigating it instead — same
+    // security property (the destination can't reach back into this page),
+    // without losing the ability to steer it.
+    const tab = window.open("", "_blank");
+
+    const go = (url: string) => {
+      if (!tab) return;
+      tab.opener = null;
+      tab.location.href = url;
+    };
+
+    if (!checkoutPayload) {
+      if (searchResultsUrl) go(searchResultsUrl);
+      else tab?.close();
+      return;
+    }
+
+    setPickingKey(key);
+    try {
+      const res = await fetch("/api/urgent-travel/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ checkoutPayload }),
+      });
+      const data = await res.json().catch(() => null);
+      const url = res.ok ? (data?.url as string | undefined) : undefined;
+      const fallback = url ?? searchResultsUrl;
+      if (fallback) go(fallback);
+      else tab?.close();
+    } catch {
+      if (searchResultsUrl) go(searchResultsUrl);
+      else tab?.close();
+    } finally {
+      setPickingKey(null);
+    }
   };
 
   const fromChanged = result && result.resolvedFrom && result.resolvedFrom.toLowerCase() !== from.trim().toLowerCase();
@@ -896,10 +943,15 @@ export default function UrgentTravel() {
                               <button
                                 type="button"
                                 className="ut-pick"
-                                onClick={() => openOffer(card.checkoutUrl, card.searchResultsUrl)}
-                                disabled={!card.checkoutUrl && !card.searchResultsUrl}
+                                onClick={() =>
+                                  handlePick(card.key, card.checkoutPayload, card.searchResultsUrl)
+                                }
+                                disabled={
+                                  (!card.checkoutPayload && !card.searchResultsUrl) ||
+                                  pickingKey === card.key
+                                }
                               >
-                                Выбрать
+                                {pickingKey === card.key ? "Открываем…" : "Выбрать"}
                               </button>
                             </div>
                           </li>
@@ -941,10 +993,15 @@ export default function UrgentTravel() {
                               <button
                                 type="button"
                                 className="ut-pick"
-                                onClick={() => openOffer(row.checkoutUrl, row.searchResultsUrl)}
-                                disabled={!row.checkoutUrl && !row.searchResultsUrl}
+                                onClick={() =>
+                                  handlePick(row.key, row.checkoutPayload, row.searchResultsUrl)
+                                }
+                                disabled={
+                                  (!row.checkoutPayload && !row.searchResultsUrl) ||
+                                  pickingKey === row.key
+                                }
                               >
-                                Выбрать
+                                {pickingKey === row.key ? "Открываем…" : "Выбрать"}
                               </button>
                             </div>
                           </li>

@@ -27,6 +27,17 @@ export interface UrgentTravelInput {
   priceMax: number | null;
 }
 
+// What the client sends back verbatim to /api/urgent-travel/checkout when the
+// traveller clicks "Выбрать" — `ref` is opaque, forwarded as-is into
+// create_checkout_link's arguments. Offers only carry a ready-made
+// `checkout_url` for etrain; every other mode needs this extra round trip
+// to land on the actual seat/room-selection page instead of a bare search
+// results listing.
+export interface CheckoutPayload {
+  transport: string;
+  ref: Record<string, unknown>;
+}
+
 export interface ResultCard {
   key: "fastest" | "cheapest";
   badge: string;
@@ -38,7 +49,7 @@ export interface ResultCard {
   arrivalTime: string;
   arrivalStation: string;
   hasTransfer: boolean;
-  checkoutUrl: string | null;
+  checkoutPayload: CheckoutPayload | null;
   searchResultsUrl: string | null;
 }
 
@@ -52,7 +63,7 @@ export interface ExtraRow {
   arrivalTime: string;
   arrivalStation: string;
   hasTransfer: boolean;
-  checkoutUrl: string | null;
+  checkoutPayload: CheckoutPayload | null;
   searchResultsUrl: string | null;
 }
 
@@ -72,7 +83,7 @@ interface McpOffer {
   price: { amount: number; currency: string };
   duration_min: number;
   search_results_url?: string;
-  checkout_url?: string;
+  checkout_ref?: Record<string, unknown>;
   segments_count?: number;
   departure_at: string;
   arrival_at: string;
@@ -223,7 +234,12 @@ export async function searchUrgentTravel(input: UrgentTravelInput): Promise<Urge
     arrivalTime: formatLocal(o.arrival_at),
     arrivalStation: stationLabel(o.legs?.[0]?.to),
     hasTransfer: (o.segments_count ?? 1) > 1,
-    checkoutUrl: o.checkout_url ?? null,
+    // create_checkout_link's default mode opens the seat/room-selection page —
+    // no seats or passengers required up front — which is what "Выбрать"
+    // should land on. o.checkout_url doesn't cover that: search_multitransport
+    // only fills it in for etrain, so avia/rail/bus offers need this payload
+    // resolved into a real link on demand, at click time.
+    checkoutPayload: o.checkout_ref ? { transport: o.transport, ref: o.checkout_ref } : null,
     searchResultsUrl: o.search_results_url ?? null,
   });
 
